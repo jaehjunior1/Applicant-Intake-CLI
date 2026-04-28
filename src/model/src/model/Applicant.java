@@ -1,4 +1,6 @@
-Public class Applicant {
+package src.model;
+
+public class Applicant {
     private String id;
     private String name;
     private String email;
@@ -7,7 +9,7 @@ Public class Applicant {
     private String status;
 
     //Constructor
-    public Applicant(String id, String name, String email, String course, String guardianName, String status;) {
+    public Applicant(String id, String name, String email, String course, String guardianName, String status) {
         this.id = id;
         this.name = name;
         this.email = email;
