@@ -18,6 +18,29 @@ public class Applicant {
         this.status = status;
     }
 
+    public String getId() {
+        return id;
+    }
+    public String getName() {
+        return name;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public String getCourse() {
+        return course;
+    }
+    public String getGuardianName() {
+        return guardianName;
+    }
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return id + "," + name + "," + email + "," + course + "," + guardianName + "," + status;

@@ -2,7 +2,9 @@ package src;
 import java.io.File;
 import java.util.List;
 import java.util.Scanner;
-import src.util;
+import src.util.*;
+import src.service.*;
+import src.model.Applicant;
 
 public class Main {
     
@@ -70,9 +72,9 @@ public class Main {
 
             Applicant applicant = new Applicant(id, name, email, course, guardian, "Pending");
 
-            FileService.saveApplication(applicant);
+            FileService.saveApplicant(applicant);
 
-            System.out.println("Application ssaved! ID: " + id);
+            System.out.println("Application saved! ID: " + id);
         }
         private static void reviewerMode() {
             System.out.println("Enter Application ID: ");
@@ -102,8 +104,8 @@ public class Main {
         if (!found) {
             System.out.println("Applicant not found.");
         } else {
-            FileService.overWriteAll(list);
-            System.out.println("Status update.");
+            FileService.overwriteAll(list);
+            System.out.println("Status updated.");
         }
     }
 }
