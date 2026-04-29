@@ -21,4 +21,14 @@ public class ApplicantService {
         }
         return false;
     }
+
+    public static Applicant findApplicantByEmail(String email) {
+        List<Applicant> list = FileService.loadApplicants();
+        for (Applicant a : list) {
+            if(a.getEmail().equals(email)) {
+                return a;
+            }
+        }
+        return null;
+    }
 }
