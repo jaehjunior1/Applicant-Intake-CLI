@@ -83,7 +83,8 @@ public class Main {
         System.out.println("1. Search by ID");
         System.out.println("2. Search by Email");
         System.out.println("3. View All Applicants");
-        System.out.println("4. Back");
+        System.out.println("4. Print Summary Report");
+        System.out.println("5. Back");
 
         String choice = scanner.nextLine();
 
@@ -98,6 +99,9 @@ public class Main {
                 viewAllApplicants(); // NEW
                 break;
             case "4":
+                printSummary();
+                break;
+            case "5":
                 return;
             default:
                 System.out.println("Invalid option.");
@@ -128,26 +132,46 @@ private static void viewAllApplicants() {
         }
 
         System.out.println("\nN - Next | P - Previous | E - Exit");
-        String choice = scanner.nextLine().toUpperCase();
+        
 
-        if (choice.equals("N")) {
-            if (end >= list.size()) {
-                System.out.println("You are on the last page.");
-            } else {
-                page++;
-            }
-        } else if (choice.equals("P")) {
-            if (page == 0) {
-                System.out.println("You are on the first page.");
-            } else {
-                page--;
-            }
-        } else if (choice.equals("E")) {
-            return;
-        } else {
-            System.out.println("Invalid option.");
-        }
+        String input = scanner.nextLine();
+
+if (input.equalsIgnoreCase("N")) {
+    if (end >= list.size()) {
+        System.out.println("You are on the last page.");
+    } else {
+        page++;
     }
+
+} else if (input.equalsIgnoreCase("P")) {
+    if (page == 0) {
+        System.out.println("You are on the first page.");
+    } else {
+        page--;
+    }
+
+} else if (input.equalsIgnoreCase("E")) {
+    return;
+
+} else {
+    // Try to interpret input as a number
+    try {
+        int userChoice = Integer.parseInt(input);
+
+        if (userChoice < 1 || userChoice > (end - start)) {
+            System.out.println("Invalid selection.");
+        } else {
+            int actualIndex = start + (userChoice - 1);
+            Applicant selected = list.get(actualIndex);
+
+            showApplicantAndUpdate(selected, list);
+        }
+
+    } catch (NumberFormatException e) {
+        System.out.println("Invalid input.");
+    }
+}
+ }
 }
 
        
@@ -183,35 +207,68 @@ private static void viewAllApplicants() {
          }
 
          private static void showApplicantAndUpdate(Applicant a, List<Applicant> list) {
-            System.out.println("\n--- Applicant Details ---");
-            System.out.println("ID: " + a.getId());
-            System.out.println("Name: " + a.getName());
-            System.out.println("Email: " + a.getEmail());
-            System.out.println("Course: " + a.getCourse());
-            System.out.println("Guardian: " + a.getGuardianName());
-            System.out.println("Status: " + a.getStatus());
+                System.out.println("\n--- Applicant Details ---");
+                System.out.println("ID: " + a.getId());
+                System.out.println("Name: " + a.getName());
+                System.out.println("Email: " + a.getEmail());
+                System.out.println("Course: " + a.getCourse());
+                System.out.println("Guardian: " + a.getGuardianName());
+                System.out.println("Status: " + a.getStatus());
 
-            if (!a.getStatus().equals("Pending")) {
-                System.out.println("This application has already been processed.");
-                return;
-                
+                if (!a.getStatus().equals("Pending")) {
+                    System.out.println("This application has already been processed.");
+                    return;
+                    
+                }
+
+                System.out.println("\n1. Accept");
+                System.out.println("2. Reject");
+                System.out.println("3. Cancel");
+
+                String choice = scanner.nextLine();
+
+                if (choice.equals("1")) {
+                    a.setStatus("Accepted");
+                } else if (choice.equals("2")) {
+                    a.setStatus("Rejected");
+                } else {
+                    System.out.println("Action cancelled.");
+                    return;
+                }
+                FileService.overwriteAll(list);
+                System.out.println("Application status updated to: " + a.getStatus());
             }
 
-            System.out.println("\n1. Accept");
-            System.out.println("2. Reject");
-            System.out.println("3. Cancel");
+         private static void printSummary() {
+                List<Applicant> list = FileService.loadApplicants();
 
-            String choice = scanner.nextLine();
+                if (list.isEmpty()) {
+                    System.out.println("No applicants found.");
+                    return;
+                }
 
-            if (choice.equals("1")) {
-                a.setStatus("Accepted");
-            } else if (choice.equals("2")) {
-                a.setStatus("Rejected");
-            } else {
-                System.out.println("Action cancelled.");
-                return;
+                int total = 0;
+                int pending = 0;
+                int accepted = 0;
+                int rejected = 0;
+
+                for (Applicant a : list) {
+                    total++;
+
+                    if (a.getStatus().equalsIgnoreCase("Pending")) {
+                        pending++;
+                    } else if (a.getStatus().equalsIgnoreCase("Accepted")) {
+                        accepted++;
+                    } else if (a.getStatus().equalsIgnoreCase("Rejected")) {
+                        rejected++;
+                    }
+                }
+
+                System.out.println("\n--- Summary Report ---");
+                System.out.println("Total Applicants: " + total);
+                System.out.println("Pending: " + pending);
+                System.out.println("Accepted: " + accepted);
+                System.out.println("Rejected: " + rejected);
             }
-            FileService.overwriteAll(list);
-            System.out.println("Application status updated to: " + a.getStatus());
-         }
-        }
+
+}
