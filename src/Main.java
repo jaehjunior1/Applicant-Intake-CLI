@@ -78,30 +78,83 @@ public class Main {
         }
 
         private static void reviewerMode() {
-            while (true) {
-                System.out.println("\n--- Reviewer Mode ---");
-                System.out.println("1. Search by Email");
-                System.out.println("2. Search by ID");
-                System.out.println("3. Back to Main Menu");
-                String choice = scanner.nextLine();
-                switch (choice) {
-                    case "1":
-                        searchByEmail();
-                        break;
-                    case "2":
-                        searchByID();
-                        break;
-                    case "3":
-                        return;
-                    default:
-                        System.out.println("Invalid option.");
-                }
-            }
+    while (true) {
+        System.out.println("\n--- Reviewer Mode ---");
+        System.out.println("1. Search by ID");
+        System.out.println("2. Search by Email");
+        System.out.println("3. View All Applicants");
+        System.out.println("4. Back");
+
+        String choice = scanner.nextLine();
+
+        switch (choice) {
+            case "1":
+                searchById();
+                break;
+            case "2":
+                searchByEmail();
+                break;
+            case "3":
+                viewAllApplicants(); // NEW
+                break;
+            case "4":
+                return;
+            default:
+                System.out.println("Invalid option.");
         }
+    }
+}
+
+private static void viewAllApplicants() {
+    List<Applicant> list = FileService.loadApplicants();
+
+    if (list.isEmpty()) {
+        System.out.println("No applicants found.");
+        return;
+    }
+
+    int pageSize = 5;
+    int page = 0;
+
+    while (true) {
+        int start = page * pageSize;
+        int end = Math.min(start + pageSize, list.size());
+
+        System.out.println("\n--- Applicants (Page " + (page + 1) + ") ---");
+
+        for (int i = start; i < end; i++) {
+            Applicant a = list.get(i);
+            System.out.println((i + 1) + ". " + a.getId() + " | " + a.getName() + " | " + a.getStatus());
+        }
+
+        System.out.println("\nN - Next | P - Previous | E - Exit");
+        String choice = scanner.nextLine().toUpperCase();
+
+        if (choice.equals("N")) {
+            if (end >= list.size()) {
+                System.out.println("You are on the last page.");
+            } else {
+                page++;
+            }
+        } else if (choice.equals("P")) {
+            if (page == 0) {
+                System.out.println("You are on the first page.");
+            } else {
+                page--;
+            }
+        } else if (choice.equals("E")) {
+            return;
+        } else {
+            System.out.println("Invalid option.");
+        }
+    }
+}
+
+       
 
         
 
-        private static void searchByID() {
+        private static void searchById() {
             System.out.println("Enter ID to search: ");
             String id = scanner.nextLine();
             List<Applicant> list = FileService.loadApplicants();
